@@ -31,7 +31,7 @@ public class GUI extends WindowController implements ChangeListener
   // private static final double MM_TO_PIXEL = 5.08;
   private static final double MM_TO_PIXEL = 1.2;
   private static final int NUM_OF_ORBS = 15;
-  private static final double FIRST_OFFSET = 18;
+  private static final double FIRST_OFFSET = 15;
   private static final double RADIUS_INCRE = 20;
 
   private ArrayList<Orb> orbs = new ArrayList<Orb>();
@@ -195,24 +195,76 @@ public class GUI extends WindowController implements ChangeListener
   private class GenerateListener implements ActionListener
   {
     int[][][] rgbs = new int[NUM_OF_ORBS][Orb.LOOP_CYCLE][3];
+
     public void actionPerformed(ActionEvent evt)
     {
-      // get RGB array
       int i = 0;
+      // get RGB array
       for(Orb o : orbs)
       {
         rgbs[i++] = o.getRGB();
       }
+
+      int[][][] temp = new int[NUM_OF_ORBS][Orb.LOOP_CYCLE][3];
+
+      // reorder
+      int headIndex = 0;
+      int tailIndex = NUM_OF_ORBS - 1;
+      for (i = 0 ; i < NUM_OF_ORBS; i++)
+      {
+        // odd
+        if (i % 2 == 1)
+        {
+          temp[headIndex++] = rgbs[i];
+        }
+        // even
+        else
+        {
+          temp[tailIndex--] = rgbs[i];
+        }
+      }
+      rgbs = temp;
       
       // export to file
       // open the file
-      PrintWriter writer;
+
+      byte[] rgb = new byte[3];
+      try
+      {
+        OutputStream writer = new FileOutputStream("export");
+        
+        int cycles = Orb.LOOP_CYCLE;
+
+        // loop cycle
+        for (int cycle = 0; cycle < cycles; cycle++)
+        {
+          // loop orbs
+          for (int o = 0; o < NUM_OF_ORBS; o++)
+          {
+            // write rgb in byte
+            rgb[0] = (byte) rgbs[o][cycle][0];
+            rgb[1] = (byte) rgbs[o][cycle][1];
+            rgb[2] = (byte) rgbs[o][cycle][2];
+            writer.write(rgb);
+          }
+        }
+
+        writer.close();
+      }
+      catch (IOException e)
+      {
+      }
+
+      /*
+      PrintWriterdd writer;
+
       try
       {
         writer = new PrintWriter("export");
 
         // append each moment
         // loop orbs
+        writer.println("int name[15][345][3] =");
         writer.println("{");
         int rgb[] = new int[3];
 
@@ -247,6 +299,7 @@ public class GUI extends WindowController implements ChangeListener
       catch(FileNotFoundException e)
       {
       }
+      */
     }
   }
 }
