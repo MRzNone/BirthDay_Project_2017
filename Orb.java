@@ -34,7 +34,7 @@ public class Orb extends ActiveObject
 
   private static final int DRAWING_BEAR = 1;
 
-  public static final int LOOP_CYCLE = 345;
+  public static final int LOOP_CYCLE = (int)(280*0.95);
   private boolean[] positions;
   private static double radIncre;
   private int[][] rgbs = new int[LOOP_CYCLE][3];
